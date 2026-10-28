@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
     "pack": "node scripts/pack.mjs",
-    "token:cws": "node scripts/get-cws-refresh-token.mjs"
+    "token:cws": "node scripts/get-cws-refresh-token.mjs",
+    "screenshots": "node scripts/generate-screenshots.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",
