@@ -79,7 +79,7 @@ jobs:
       - name: Upload & Publish to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v5.0.0
         with:
-          file-name: bark-extension.zip
+          file-path: bark-extension.zip
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
