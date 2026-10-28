@@ -8,7 +8,8 @@ IMPORTANT: Apply EXACTLY ONE release-type label on the right side of this PR:
 CI will block the PR if a label is missing or if multiple labels conflict!
 -->
 
-## Patch Notes (User-Facing)
+## Patch Notes
+<!-- THIS WILL BE USER-FACING! -->
 <!-- Required for `feature`, `fix`, or `breaking` changes (validated by CI). -->
 <!-- Write short bullet points in plain language for Bark users (these go into CHANGELOG.md and CWS update notes). -->
 <!-- If this PR is labeled `chore`, you may leave this blank. -->
