@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "Bark",
+  "version": "0.1.0",
+  "description": "Arc-inspired workspaces, pinned tab folders, command palette, and tab archive for Chrome.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open Bark Sidebar",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "sidePanel",
+    "storage",
+    "search",
+    "downloads",
+    "alarms",
+    "favicon"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "commands": {
+    "toggle-command-palette": {
+      "suggested_key": {
+        "default": "Alt+T",
+        "windows": "Alt+T",
+        "linux": "Alt+T",
+        "mac": "MacCtrl+T"
+      },
+      "description": "Open Bark Command Palette"
+    }
+  }
+}

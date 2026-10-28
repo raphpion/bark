@@ -1,0 +1,30 @@
+{
+  "name": "bark-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Arc-inspired Chrome Extension with Spaces, Pinned Tabs, Folders, Archive Hub, and Command Palette",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/verify-hardening.mjs && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json && node scripts/verify-hardening.mjs",
+    "check:pr": "node scripts/verify-pr.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run build && playwright test",
+    "pack": "node scripts/pack.mjs",
+    "token:cws": "node scripts/get-cws-refresh-token.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "preact": "^11.0.2"
+  }
+}
