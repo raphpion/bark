@@ -1,0 +1,43 @@
+name: Generate & Update Screenshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    name: Generate & commit screenshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Google Chrome for Playwright
+        run: npx playwright install --with-deps chrome
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Generate fresh screenshots
+        run: npm run screenshots
+
+      - name: Commit updated screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add store-assets/
+          if git diff --cached --quiet; then
+            echo "No screenshot changes detected."
+          else
+            git commit -m "chore(store): update store screenshots [skip ci]"
+            git push origin main
+          fi
