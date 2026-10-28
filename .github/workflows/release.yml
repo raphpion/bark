@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,6 +15,7 @@ permissions:
 jobs:
   release-please:
     name: Release Please (PR & Tag)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -27,13 +31,17 @@ jobs:
   publish-cws:
     name: Build & Publish to Chrome Web Store
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: |
+      always() &&
+      (needs.release-please.outputs.release_created == 'true' ||
+       startsWith(github.ref, 'refs/tags/v') ||
+       github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ needs.release-please.outputs.tag_name || github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -53,11 +61,20 @@ jobs:
           npm run build
           node scripts/pack.mjs
 
-      - name: Attach ZIP to GitHub Release
+      - name: Package store screenshots
+        run: |
+          zip -j bark-store-screenshots.zip store-assets/*.jpg
+
+      - name: Attach ZIP and Store Assets to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name || github.ref_name }}
         run: |
-          gh release upload "${{ needs.release-please.outputs.tag_name }}" bark-extension.zip --clobber
+          if gh release view "$TAG_NAME" > /dev/null 2>&1; then
+            gh release upload "$TAG_NAME" bark-extension.zip bark-store-screenshots.zip --clobber
+          else
+            gh release create "$TAG_NAME" bark-extension.zip bark-store-screenshots.zip --title "$TAG_NAME" --generate-notes
+          fi
 
       - name: Upload & Publish to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v5.0.0
