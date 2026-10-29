@@ -117,4 +117,29 @@ describe('validatePrMetadata', () => {
     expect(res.ok).toBe(true);
     expect(res.category).toBe('chore');
   });
+
+  it('succeeds for automated Release Please PRs by label, title, or branch', () => {
+    const byLabel = validatePrMetadata({
+      labels: ['autorelease: pending'],
+      body: ':robot: Release Please',
+    });
+    expect(byLabel.ok).toBe(true);
+    expect(byLabel.category).toBe('chore');
+
+    const byTitle = validatePrMetadata({
+      title: 'chore(main): release 0.2.0',
+      labels: [],
+      body: ':robot: Release Please',
+    });
+    expect(byTitle.ok).toBe(true);
+    expect(byTitle.category).toBe('chore');
+
+    const byBranch = validatePrMetadata({
+      headRef: 'release-please--branches--main--components--bark-extension',
+      labels: [],
+      body: ':robot: Release Please',
+    });
+    expect(byBranch.ok).toBe(true);
+    expect(byBranch.category).toBe('chore');
+  });
 });
