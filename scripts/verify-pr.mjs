@@ -33,6 +33,9 @@ export const CATEGORY_MAP = {
   docs: 'chore',
   dependencies: 'chore',
   refactor: 'chore',
+  'autorelease: pending': 'chore',
+  'autorelease: tagged': 'chore',
+  autorelease: 'chore',
 };
 
 /**
@@ -79,6 +82,8 @@ export function validatePrMetadata(input) {
     }
   }
 
+  const isReleasePlease = input?.isReleasePlease || (typeof input?.title === 'string' && /^chore\(main\):\s*release/i.test(input.title)) || (typeof input?.headRef === 'string' && input.headRef.startsWith('release-please--'));
+  if (isReleasePlease && !matchedCategories.has('chore')) { matchedCategories.set('chore', ['autorelease']); }
   const distinctCategories = [...matchedCategories.keys()];
   const allMatchedLabels = [...matchedCategories.values()].flat();
 
@@ -162,6 +167,8 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '
   const result = validatePrMetadata({
     labels,
     body: pr.body,
+    title: pr.title,
+    headRef: pr.head?.ref,
   });
 
   if (!result.ok) {
